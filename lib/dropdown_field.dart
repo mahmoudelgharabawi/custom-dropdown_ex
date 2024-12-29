@@ -18,6 +18,7 @@ class _DropDownField extends StatefulWidget {
   final BorderSide? errorBorderSide;
   final BorderRadius? borderRadius;
   final Widget? suffixIcon;
+  final Widget? prefixIcon;
   final Color? fillColor;
   final EdgeInsets? contentPadding;
   final bool isItemsNullOrEmpty;
@@ -29,6 +30,7 @@ class _DropDownField extends StatefulWidget {
     required this.onTap,
     // this.onChanged,
     this.suffixIcon,
+    this.prefixIcon,
     this.isItemsNullOrEmpty = false,
     this.hintText,
     this.hintStyle,
@@ -113,6 +115,7 @@ class _DropDownFieldState extends State<_DropDownField> {
         decoration: InputDecoration(
           isDense: true,
           contentPadding: widget.contentPadding ?? _contentPadding,
+          prefixIcon: widget.prefixIcon,
           suffixIcon: widget.controller.text != ''
               ? InkWell(
                   onTap: () {

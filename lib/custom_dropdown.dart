@@ -26,6 +26,7 @@ class CustomDropdown extends StatefulWidget {
   final BorderSide? errorBorderSide;
   final BorderRadius? borderRadius;
   final Widget? fieldSuffixIcon;
+  final Widget? fieldPrefixIcon;
   final Function(Map<String, dynamic>)? onChanged;
   final bool? excludeSelected;
   final Color? fillColor;
@@ -56,6 +57,7 @@ class CustomDropdown extends StatefulWidget {
     this.borderRadius,
     this.borderSide,
     this.fieldSuffixIcon,
+    this.fieldPrefixIcon,
     this.onChanged,
     this.contentPadding,
     this.onRemoveClicked,
@@ -84,6 +86,7 @@ class CustomDropdown extends StatefulWidget {
     this.borderSide,
     this.basicWidget,
     this.fieldSuffixIcon,
+    this.fieldPrefixIcon,
     this.onChanged,
     this.onRemoveClicked,
     this.contentPadding,
@@ -208,6 +211,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                     errorText: widget.errorText,
                     hintStyle: hintStyle,
                     hintText: hintText,
+                    prefixIcon: widget.fieldPrefixIcon,
                     suffixIcon: widget.fieldSuffixIcon,
                     // onChanged: widget.onChanged,
                     fillColor: widget.fillColor,
