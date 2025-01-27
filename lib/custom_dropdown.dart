@@ -2,7 +2,11 @@ library animated_custom_dropdown;
 
 export 'custom_dropdown.dart';
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 part 'animated_section.dart';
 part 'dropdown_field.dart';
@@ -34,6 +38,8 @@ class CustomDropdown extends StatefulWidget {
   final bool? canCloseOutsideBounds;
   final double? customOverRelayWidth;
 
+  /// only the returned result must be contain data as a key from returning object and ex url (https://kafaratplus-api-4.tecfy.co/api/general/lookup/vehicle-brand?textSearch=)
+  final String? searchUrl;
   final _SearchType? searchType;
 
   /// the widget you click at to open drop down
@@ -49,6 +55,7 @@ class CustomDropdown extends StatefulWidget {
     this.hintText,
     this.selectedValue,
     this.hintStyle,
+    this.searchUrl,
     this.selectedStyle,
     this.errorText,
     this.errorStyle,
@@ -82,6 +89,7 @@ class CustomDropdown extends StatefulWidget {
     this.errorStyle,
     this.listItemStyle,
     this.errorBorderSide,
+    this.searchUrl,
     this.borderRadius,
     this.borderSide,
     this.basicWidget,
@@ -173,6 +181,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
       child: _OverlayBuilder(
         overlay: (size, hideCallback) {
           return _DropdownOverlay(
+            nameKey: widget.nameKey,
+            nameMapKey: widget.nameMapKey,
+            searchUrl: widget.searchUrl,
             customOverRelayWidth: widget.customOverRelayWidth,
             items: dataItems,
             controller: textEditingController,

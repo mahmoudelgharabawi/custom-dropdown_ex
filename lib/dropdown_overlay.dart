@@ -24,6 +24,9 @@ class _DropdownOverlay extends StatefulWidget {
   final _SearchType? searchType;
   final Function(String)? onChanged;
   final double? customOverRelayWidth;
+  final String? searchUrl;
+  final String? nameKey;
+  final String? nameMapKey;
 
   const _DropdownOverlay({
     Key? key,
@@ -34,6 +37,9 @@ class _DropdownOverlay extends StatefulWidget {
     required this.hideOverlay,
     required this.hintText,
     this.headerStyle,
+    this.searchUrl,
+    this.nameKey,
+    this.nameMapKey,
     this.listItemStyle,
     this.excludeSelected,
     this.canCloseOutsideBounds,
@@ -94,6 +100,8 @@ class _DropdownOverlayState extends State<_DropdownOverlay> {
     }
     filteredItems = items;
   }
+
+  Timer? _debounce;
 
   @override
   void dispose() {
@@ -254,11 +262,15 @@ class _DropdownOverlayState extends State<_DropdownOverlay> {
                                 if (onListDataSearch)
                                   _SearchField(
                                     items: filteredItems,
-                                    onSearchedItems: (val) {
-                                      setState(() => items = val);
+                                    onSearchedItems: (result, value) {
+                                      onSearchItem(result, value);
                                     },
                                   ),
-                                items.length > 4 ? Expanded(child: list) : list
+                                (showSearchLoading && widget.searchUrl != null)
+                                    ? const _LoadingWidget()
+                                    : items.length > 4
+                                        ? Expanded(child: list)
+                                        : list
                               ],
                             ),
                           ),
@@ -285,6 +297,52 @@ class _DropdownOverlayState extends State<_DropdownOverlay> {
             )
           : child,
     );
+  }
+
+  bool showSearchLoading = false;
+
+  Future<void> onSearchItem(List<String> result, String value) async {
+    if (widget.searchUrl != null) {
+      // only if there's a search url
+      if (_debounce?.isActive ?? false) _debounce?.cancel();
+
+      _debounce = Timer(const Duration(milliseconds: 300), () async {
+        List<Map<String, dynamic>>? data;
+        setState(() {
+          showSearchLoading = true;
+        });
+        var response = await http.get(Uri.parse('${widget.searchUrl!}$value'));
+        var responseData = jsonDecode(response.body);
+        if (responseData['success'] ?? false) {
+          data = List<Map<String, dynamic>>.from(responseData['data']);
+        }
+        setState(() {
+          showSearchLoading = false;
+          items = dataItems(data ?? []);
+        });
+      });
+    } else {
+      setState(() => items = result);
+    }
+  }
+
+  List<String> dataItems(List<Map<String, dynamic>> data) => data
+      .map((element) => (element[widget.nameKey] is Map)
+          ? (element[widget.nameKey][widget.nameMapKey]).toString()
+          : element[widget.nameKey].toString())
+      .toList();
+}
+
+class _LoadingWidget extends StatelessWidget {
+  const _LoadingWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+        child: Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: CircularProgressIndicator.adaptive(),
+    ));
   }
 }
 
@@ -349,7 +407,7 @@ class _ItemsList extends StatelessWidget {
 
 class _SearchField extends StatefulWidget {
   final List<String> items;
-  final ValueChanged<List<String>> onSearchedItems;
+  final void Function(List<String>, String) onSearchedItems;
   const _SearchField({
     Key? key,
     required this.items,
@@ -373,13 +431,13 @@ class _SearchFieldState extends State<_SearchField> {
     final result = widget.items
         .where((item) => item.toLowerCase().contains(str.toLowerCase()))
         .toList();
-    widget.onSearchedItems(result);
+    widget.onSearchedItems(result, str);
   }
 
   void onClear() {
     if (searchCtrl.text.isNotEmpty) {
       searchCtrl.clear();
-      widget.onSearchedItems(widget.items);
+      widget.onSearchedItems(widget.items, '');
     }
   }
 

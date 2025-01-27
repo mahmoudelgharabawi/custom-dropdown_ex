@@ -32,36 +32,22 @@ class _HomeState extends State<Home> {
   final formKey = GlobalKey<FormState>();
   final List<Map<String, dynamic>> list = [
     {
-      "id": 1,
-      'name': {'ar': 'develperAr', 'en': 'develperEn'}
+      "userId": 10,
+      "id": 194,
+      "title": "sed ut vero sit molestiae",
+      "completed": false
     },
     {
-      "id": 2,
-      'name': {'ar': 'enginnerAr', 'en': 'enginnerEn'}
+      "userId": 10,
+      "id": 195,
+      "title": "rerum ex veniam mollitia voluptatibus pariatur",
+      "completed": true
     },
     {
-      "id": 3,
-      'name': {'ar': 'mechnaicAr', 'en': 'mechnaicEn'}
-    },
-    {
-      "id": 4,
-      'name': {'ar': 'driverAr', 'en': 'driverEn'}
-    },
-    {
-      "id": 5,
-      'name': {'ar': 'driverAr', 'en': 'driverEn'}
-    },
-    {
-      "id": 6,
-      'name': {'ar': 'driverAr', 'en': 'driverEn'}
-    },
-    {
-      "id": 7,
-      'name': {'ar': 'driverAr', 'en': 'driverEn'}
-    },
-    {
-      "id": 8,
-      'name': {'ar': 'driverAr', 'en': 'driverEn'}
+      "userId": 10,
+      "id": 196,
+      "title": "consequuntur aut ut fugit similique",
+      "completed": true
     },
   ];
   final jobRoleDropdownCtrl = TextEditingController(),
@@ -137,16 +123,31 @@ class _HomeState extends State<Home> {
           const Text('Job Roles Search Dropdown', style: _labelStyle),
           const SizedBox(height: 8),
           CustomDropdown.search(
+            searchUrl:
+                'https://kafaratplus-api-4.tecfy.co/api/general/lookup/vehicle-brand?textSearch=',
             hintText: 'Select job role',
             excludeSelected: true,
             items: list,
-            nameKey: "job",
-            selectedValue: {"id": 3, 'job': 'Consultant'},
+            nameKey: "name",
+            nameMapKey: "en",
+
+            // selectedValue: {"id": 3, 'job': 'Consultant'},
+            onChanged: (value) {},
+          ),
+          const SizedBox(height: 24),
+          // dropdown having search field
+          const Text('Job Roles Search Dropdown', style: _labelStyle),
+          const SizedBox(height: 8),
+          CustomDropdown.search(
+            hintText: 'Select job role No Url',
+            excludeSelected: true,
+            items: list,
+            nameKey: "title",
+            // selectedValue: {"id": 3, 'job': 'Consultant'},
             onChanged: (value) {
               print('AAAAASASASASASASASASASASASSAS222${value}');
             },
           ),
-          const SizedBox(height: 24),
           const Divider(height: 0),
           const SizedBox(height: 24),
 
