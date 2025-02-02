@@ -15,6 +15,7 @@ part 'overlay_builder.dart';
 
 enum _SearchType { onListData }
 
+// ignore: must_be_immutable
 class CustomDropdown extends StatefulWidget {
   final List<Map<String, dynamic>>? items;
   final Map<String, dynamic>? selectedValue;
@@ -39,7 +40,8 @@ class CustomDropdown extends StatefulWidget {
   final double? customOverRelayWidth;
 
   /// only the returned result must be contain data as a key from returning object and ex url (https://kafaratplus-api-4.tecfy.co/api/general/lookup/vehicle-brand?textSearch=)
-  final String? searchUrl;
+  String? searchUrl;
+  Map<String, String>? headers;
   final _SearchType? searchType;
 
   /// the widget you click at to open drop down
@@ -47,7 +49,7 @@ class CustomDropdown extends StatefulWidget {
 
   final void Function()? onRemoveClicked;
 
-  const CustomDropdown({
+  CustomDropdown({
     Key? key,
     this.nameKey,
     this.nameMapKey,
@@ -55,7 +57,6 @@ class CustomDropdown extends StatefulWidget {
     this.hintText,
     this.selectedValue,
     this.hintStyle,
-    this.searchUrl,
     this.selectedStyle,
     this.errorText,
     this.errorStyle,
@@ -76,7 +77,7 @@ class CustomDropdown extends StatefulWidget {
         canCloseOutsideBounds = true,
         super(key: key);
 
-  const CustomDropdown.search({
+  CustomDropdown.search({
     Key? key,
     this.items,
     this.nameKey,
@@ -90,6 +91,7 @@ class CustomDropdown extends StatefulWidget {
     this.listItemStyle,
     this.errorBorderSide,
     this.searchUrl,
+    this.headers,
     this.borderRadius,
     this.borderSide,
     this.basicWidget,
@@ -174,62 +176,78 @@ class _CustomDropdownState extends State<CustomDropdown> {
       fontWeight: FontWeight.w500,
     ).merge(widget.selectedStyle);
 
-    return AbsorbPointer(
-      absorbing: ((widget.items == null) || (widget.items?.isEmpty ?? false))
-          ? true
-          : false,
-      child: _OverlayBuilder(
-        overlay: (size, hideCallback) {
-          return _DropdownOverlay(
-            nameKey: widget.nameKey,
-            nameMapKey: widget.nameMapKey,
-            searchUrl: widget.searchUrl,
-            customOverRelayWidth: widget.customOverRelayWidth,
-            items: dataItems,
-            controller: textEditingController,
-            size: size,
-            layerLink: layerLink,
-            hideOverlay: hideCallback,
-            headerStyle: (textEditingController.text.isNotEmpty)
-                ? selectedStyle
-                : hintStyle,
-            hintText: hintText,
-            listItemStyle: widget.listItemStyle,
-            excludeSelected: widget.excludeSelected,
-            canCloseOutsideBounds: widget.canCloseOutsideBounds,
-            searchType: widget.searchType,
-            onChanged: (value) => onChangeEx(value),
-          );
-        },
-        child: (showCallback) {
-          return CompositedTransformTarget(
-            link: layerLink,
-            child: widget.basicWidget != null
-                ? InkWell(
-                    onTap: showCallback,
-                    child: widget.basicWidget,
-                  )
-                : _DropDownField(
-                    onRemoveClicked: widget.onRemoveClicked,
-                    isItemsNullOrEmpty: dataItems.isEmpty,
-                    controller: textEditingController,
-                    onTap: showCallback,
-                    style: selectedStyle,
-                    borderRadius: widget.borderRadius,
-                    borderSide: widget.borderSide,
-                    errorBorderSide: widget.errorBorderSide,
-                    errorStyle: widget.errorStyle,
-                    errorText: widget.errorText,
-                    hintStyle: hintStyle,
-                    hintText: hintText,
-                    prefixIcon: widget.fieldPrefixIcon,
-                    suffixIcon: widget.fieldSuffixIcon,
-                    // onChanged: widget.onChanged,
-                    fillColor: widget.fillColor,
-                    contentPadding: widget.contentPadding,
-                  ),
-          );
-        },
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: AbsorbPointer(
+        absorbing: ((widget.items == null) || (widget.items?.isEmpty ?? false))
+            ? true
+            : false,
+        child: _OverlayBuilder(
+          overlay: (size, hideCallback) {
+            return _DropdownOverlay(
+              nameKey: widget.nameKey,
+              nameMapKey: widget.nameMapKey,
+              searchUrl: widget.searchUrl,
+              headers: widget.headers,
+              customOverRelayWidth: widget.customOverRelayWidth,
+              items: dataItems,
+              controller: textEditingController,
+              size: size,
+              layerLink: layerLink,
+              hideOverlay: hideCallback,
+              headerStyle: (textEditingController.text.isNotEmpty)
+                  ? selectedStyle
+                  : hintStyle,
+              hintText: hintText,
+              listItemStyle: widget.listItemStyle,
+              excludeSelected: widget.excludeSelected,
+              canCloseOutsideBounds: widget.canCloseOutsideBounds,
+              searchType: widget.searchType,
+              onChanged: (value) {
+                onChangeEx(value);
+                FocusScope.of(context).unfocus();
+              },
+            );
+          },
+          child: (showCallback) {
+            return CompositedTransformTarget(
+              link: layerLink,
+              child: widget.basicWidget != null
+                  ? InkWell(
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                        showCallback();
+                      },
+                      child: widget.basicWidget,
+                    )
+                  : _DropDownField(
+                      onRemoveClicked: widget.onRemoveClicked,
+                      isItemsNullOrEmpty: dataItems.isEmpty,
+                      controller: textEditingController,
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                        showCallback();
+                      },
+                      style: selectedStyle,
+                      borderRadius: widget.borderRadius,
+                      borderSide: widget.borderSide,
+                      errorBorderSide: widget.errorBorderSide,
+                      errorStyle: widget.errorStyle,
+                      errorText: widget.errorText,
+                      hintStyle: hintStyle,
+                      hintText: hintText,
+                      prefixIcon: widget.fieldPrefixIcon,
+                      suffixIcon: widget.fieldSuffixIcon,
+                      // onChanged: widget.onChanged,
+                      fillColor: widget.fillColor,
+                      contentPadding: widget.contentPadding,
+                    ),
+            );
+          },
+        ),
       ),
     );
   }

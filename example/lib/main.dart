@@ -139,6 +139,8 @@ class _HomeState extends State<Home> {
           const Text('Job Roles Search Dropdown', style: _labelStyle),
           const SizedBox(height: 8),
           CustomDropdown.search(
+            searchUrl:
+                'https://kafaratplus-api-4.tecfy.co/api/general/lookup/vehicle-brand?textSearch=',
             hintText: 'Select job role No Url',
             excludeSelected: true,
             items: list,

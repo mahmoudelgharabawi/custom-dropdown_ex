@@ -33,11 +33,16 @@ class _OverlayBuilderState extends State<_OverlayBuilder> {
     addToOverlay(overlayEntry!);
   }
 
-  void addToOverlay(OverlayEntry entry) => Overlay.of(context)?.insert(entry);
+  void addToOverlay(OverlayEntry entry) => Overlay.of(context).insert(entry);
 
   void hideOverlay() {
-    overlayEntry!.remove();
-    overlayEntry = null;
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        debugPrint('Overlay is being hidden');
+        overlayEntry?.remove();
+        overlayEntry = null;
+      }
+    });
   }
 
   @override

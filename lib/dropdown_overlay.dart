@@ -25,6 +25,8 @@ class _DropdownOverlay extends StatefulWidget {
   final Function(String)? onChanged;
   final double? customOverRelayWidth;
   final String? searchUrl;
+  final Map<String, String>? headers;
+
   final String? nameKey;
   final String? nameMapKey;
 
@@ -38,6 +40,7 @@ class _DropdownOverlay extends StatefulWidget {
     required this.hintText,
     this.headerStyle,
     this.searchUrl,
+    this.headers,
     this.nameKey,
     this.nameMapKey,
     this.listItemStyle,
@@ -311,7 +314,8 @@ class _DropdownOverlayState extends State<_DropdownOverlay> {
         setState(() {
           showSearchLoading = true;
         });
-        var response = await http.get(Uri.parse('${widget.searchUrl!}$value'));
+        var response = await http.get(Uri.parse('${widget.searchUrl!}$value'),
+            headers: widget.headers);
         var responseData = jsonDecode(response.body);
         if (responseData['success'] ?? false) {
           data = List<Map<String, dynamic>>.from(responseData['data']);
@@ -446,6 +450,7 @@ class _SearchFieldState extends State<_SearchField> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: TextField(
+        focusNode: FocusNode(),
         controller: searchCtrl,
         onChanged: onSearch,
         decoration: InputDecoration(
