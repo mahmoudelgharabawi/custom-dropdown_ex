@@ -125,26 +125,27 @@ class _DropDownFieldState extends State<_DropDownField> {
           isDense: true,
           contentPadding: widget.contentPadding ?? _contentPadding,
           prefixIcon: widget.prefixIcon,
-          suffixIcon: widget.controller.text != ''
-              ? InkWell(
-                  onTap: () {
-                    setState(() {});
-                    widget.controller.clear();
-                    widget.onRemoveClicked?.call();
-                  },
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.red,
-                    size: 20,
-                  ),
-                )
-              : widget.suffixIcon ??
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color:
-                        widget.isItemsNullOrEmpty ? Colors.grey : Colors.black,
-                    size: 20,
-                  ),
+          suffixIcon: widget.suffixIcon ??
+              (widget.controller.text != ''
+                  ? InkWell(
+                      onTap: () {
+                        setState(() {});
+                        widget.controller.clear();
+                        widget.onRemoveClicked?.call();
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.red,
+                        size: 20,
+                      ),
+                    )
+                  : Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: widget.isItemsNullOrEmpty
+                          ? Colors.grey
+                          : Colors.black,
+                      size: 20,
+                    )),
           hintText: widget.hintText,
           hintStyle: widget.hintStyle,
           fillColor: widget.fillColor,
