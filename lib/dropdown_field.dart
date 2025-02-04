@@ -22,6 +22,9 @@ class _DropDownField extends StatefulWidget {
   final Color? fillColor;
   final EdgeInsets? contentPadding;
   final bool isItemsNullOrEmpty;
+  final Widget? label;
+  final TextStyle? labelStyle;
+  final String? labelText;
   final void Function()? onRemoveClicked;
 
   const _DropDownField({
@@ -29,6 +32,9 @@ class _DropDownField extends StatefulWidget {
     required this.controller,
     required this.onTap,
     // this.onChanged,
+    this.label,
+    this.labelText,
+    this.labelStyle,
     this.suffixIcon,
     this.prefixIcon,
     this.isItemsNullOrEmpty = false,
@@ -113,6 +119,9 @@ class _DropDownFieldState extends State<_DropDownField> {
         // onChanged: widget.onChanged,
         style: widget.style,
         decoration: InputDecoration(
+          label: widget.label,
+          labelStyle: widget.labelStyle,
+          labelText: widget.labelText,
           isDense: true,
           contentPadding: widget.contentPadding ?? _contentPadding,
           prefixIcon: widget.prefixIcon,

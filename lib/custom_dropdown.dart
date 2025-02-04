@@ -38,6 +38,9 @@ class CustomDropdown extends StatefulWidget {
   final EdgeInsets? contentPadding;
   final bool? canCloseOutsideBounds;
   final double? customOverRelayWidth;
+  final Widget? label;
+  final TextStyle? labelStyle;
+  final String? labelText;
 
   /// only the returned result must be contain data as a key from returning object and ex url (https://kafaratplus-api-4.tecfy.co/api/general/lookup/vehicle-brand?textSearch=)
   String? searchUrl;
@@ -51,6 +54,9 @@ class CustomDropdown extends StatefulWidget {
 
   CustomDropdown({
     Key? key,
+    this.label,
+    this.labelText,
+    this.labelStyle,
     this.nameKey,
     this.nameMapKey,
     this.items,
@@ -79,6 +85,9 @@ class CustomDropdown extends StatefulWidget {
 
   CustomDropdown.search({
     Key? key,
+    this.label,
+    this.labelText,
+    this.labelStyle,
     this.items,
     this.nameKey,
     this.nameMapKey,
@@ -224,6 +233,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
                       child: widget.basicWidget,
                     )
                   : _DropDownField(
+                      label: widget.label,
+                      labelStyle: widget.labelStyle,
+                      labelText: widget.labelText,
                       onRemoveClicked: widget.onRemoveClicked,
                       isItemsNullOrEmpty: dataItems.isEmpty,
                       controller: textEditingController,
