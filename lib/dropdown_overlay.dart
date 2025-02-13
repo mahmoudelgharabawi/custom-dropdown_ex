@@ -22,7 +22,7 @@ class _DropdownOverlay extends StatefulWidget {
   final bool? excludeSelected;
   final bool? canCloseOutsideBounds;
   final _SearchType? searchType;
-  final Function(String)? onChanged;
+  final Function(String, List<Map<String, dynamic>>?)? onChanged;
   final double? customOverRelayWidth;
   final String? searchUrl;
   final Map<String, String>? headers;
@@ -60,6 +60,7 @@ class _DropdownOverlayState extends State<_DropdownOverlay> {
   bool displayOverlayBottom = true;
   late String headerText;
   late List<String> items;
+  List<Map<String, dynamic>>? searchedApiData = [];
   late List<String> filteredItems;
   final key1 = GlobalKey(), key2 = GlobalKey();
   final scrollController = ScrollController();
@@ -163,7 +164,7 @@ class _DropdownOverlayState extends State<_DropdownOverlay> {
               await Future.delayed(const Duration(milliseconds: 300));
               if (headerText != value) {
                 widget.controller.text = value;
-                widget.onChanged?.call(widget.controller.text);
+                widget.onChanged?.call(widget.controller.text, searchedApiData);
               }
             },
           )
@@ -322,6 +323,7 @@ class _DropdownOverlayState extends State<_DropdownOverlay> {
         }
         setState(() {
           showSearchLoading = false;
+          searchedApiData = data ?? [];
           items = dataItems(data ?? []);
         });
       });

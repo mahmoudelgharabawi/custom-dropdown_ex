@@ -4,6 +4,7 @@ export 'custom_dropdown.dart';
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -148,15 +149,27 @@ class _CustomDropdownState extends State<CustomDropdown> {
     _initSelected = textEditingController.text;
   }
 
-  void onChangeEx(String value) {
-    var result = widget.items?.indexWhere((e) =>
-        ((e[widget.nameKey] is Map)
-            ? e[widget.nameKey][widget.nameMapKey]
-            : e[widget.nameKey]) ==
-        value);
+  void onChangeEx(String value, List<Map<String, dynamic>>? items) {
+    int? result;
+    List<Map<String, dynamic>>? itemsListEx;
+    if (items?.isNotEmpty ?? false) {
+      result = items?.indexWhere((e) =>
+          ((e[widget.nameKey] is Map)
+              ? e[widget.nameKey][widget.nameMapKey]
+              : e[widget.nameKey]) ==
+          value);
+      itemsListEx = items;
+    } else {
+      result = widget.items?.indexWhere((e) =>
+          ((e[widget.nameKey] is Map)
+              ? e[widget.nameKey][widget.nameMapKey]
+              : e[widget.nameKey]) ==
+          value);
+      itemsListEx = widget.items;
+    }
 
     if (result != -1) {
-      widget.onChanged?.call(widget.items?[result ?? 0] ?? {});
+      widget.onChanged?.call(itemsListEx?[result ?? 0] ?? {});
     } else {
       widget.onChanged?.call({});
     }
@@ -215,8 +228,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
               excludeSelected: widget.excludeSelected,
               canCloseOutsideBounds: widget.canCloseOutsideBounds,
               searchType: widget.searchType,
-              onChanged: (value) {
-                onChangeEx(value);
+              onChanged: (value, newApiData) {
+                onChangeEx(value, newApiData);
                 FocusScope.of(context).unfocus();
               },
             );
